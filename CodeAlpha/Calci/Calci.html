@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Magic Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated heading */
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(270deg, #ff416c, #ff4b2b, #00c9ff, #92fe9d, #ff416c);
+      background-size: 1000% 1000%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 10s ease infinite;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .calculator {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      padding: 30px;
+      border-radius: 30px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+      text-align: center;
+      transition: transform 0.3s ease;
+      animation: popup 1s ease;
+    }
+
+    @keyframes popup {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    .display {
+      width: 100%;
+      height: 60px;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 15px;
+      padding: 10px;
+      text-align: right;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 15px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 1.5rem;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #ff416c, #ff4b2b);
+      color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      background: linear-gradient(145deg, #ff4b2b, #ff416c);
+      transform: scale(1.1);
+    }
+
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    .equal {
+      background: linear-gradient(145deg, #00c9ff, #92fe9d);
+      color: #000;
+    }
+
+    .clear {
+      background: linear-gradient(145deg, #f7971e, #ffd200);
+      color: #000;
+    }
+
+    .sparkle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      animation: sparkle 0.5s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes sparkle {
+      from { width: 10px; height: 10px; opacity: 1; }
+      to { width: 50px; height: 50px; opacity: 0; }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) translateX(0); }
+      100% { transform: translateY(-100vh) translateX(100px); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <h1>CALCULATOR</h1>
+  <input type="text" id="display" class="display" readonly />
+  <div class="buttons">
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button onclick="append('/')">÷</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button onclick="append('*')">×</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button onclick="append('-')">−</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button onclick="calculate()" class="equal">=</button>
+    <button onclick="append('+')">+</button>
+
+    <button onclick="clearDisplay()" class="clear">C</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById("display");
+
+  function append(val) {
+    display.value += val;
+  }
+
+  function clearDisplay() {
+    display.value = '';
+  }
+
+  function calculate() {
+    try {
+      display.value = eval(display.value);
+    } catch {
+      display.value = "Error";
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (!isNaN(e.key) || ['+', '-', '*', '/', '.'].includes(e.key)) {
+      append(e.key);
+    } else if (e.key === 'Enter') {
+      calculate();
+    } else if (e.key === 'Backspace') {
+      display.value = display.value.slice(0, -1);
+    } else if (e.key === 'Escape') {
+      clearDisplay();
+    }
+  });
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const sparkle = document.createElement('span');
+      sparkle.classList.add('sparkle');
+      sparkle.style.left = (e.clientX - btn.getBoundingClientRect().left) + "px";
+      sparkle.style.top = (e.clientY - btn.getBoundingClientRect().top) + "px";
+      btn.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 500);
+    });
+  });
+
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    particle.style.left = Math.random() * window.innerWidth + "px";
+    particle.style.top = Math.random() * window.innerHeight + "px";
+    particle.style.animationDuration = 10 + Math.random() * 20 + "s";
+    particle.style.opacity = Math.random();
+    document.body.appendChild(particle);
+  }
+</script>
+ <footer class="site-footer">
+        <p>&copy; <span id="copyright-year"></span> Gouse Velluri. All rights reserved.</p>
+        <p>Last updated: <span id="current-date-time"></span></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Update copyright year and current date/time
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+        
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('current-date-time').textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        updateDateTime();
+        setInterval(updateDateTime, 1000); // Update every second
+    </script>
+
+    <style>
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            font-family: Arial, sans-serif;
+            color: #555;
+        }
+        
+        .site-footer p {
+            margin: 5px 0;
+        }
+    </style>
+
+</body>
+</html>
